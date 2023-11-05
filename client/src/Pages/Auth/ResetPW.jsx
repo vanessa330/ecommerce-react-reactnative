@@ -3,10 +3,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useTheme, Box, Typography, TextField, Button } from "@mui/material";
 import axios from "axios";
 
+const rootAPI = process.env.REACT_APP_API;
+
 const ResetPW = () => {
   const navigate = useNavigate();
   const { oneTimeToken } = useParams();
-  const rootAPI = process.env.REACT_APP_API;
 
   // CSS
   const theme = useTheme();

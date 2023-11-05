@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { setCart } from "../../store/rootReducer";
+import { setCart, setCartToNull } from "../../store/rootReducer";
 import {
   Box,
   Divider,
@@ -12,10 +12,14 @@ import {
 import { useNavigate } from "react-router-dom";
 import FlexBetween from "../../Components/UI/FlexBetween";
 import { AddCircleOutline, RemoveCircleOutline } from "@mui/icons-material";
+import axios from "axios";
+
+const rootAPI = process.env.REACT_APP_API;
 
 const Cart = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const userId = useSelector((state) => state.userId);
   const cart = useSelector((state) => state.cart);
 
   // CSS
@@ -48,7 +52,33 @@ const Cart = () => {
 
   const checkOut = async () => {
     try {
-      console.log("Checking out");
+      const cartbody = {
+        items: [],
+        userId: Math.floor(userId),
+      };
+  
+      cart.forEach((item) => {
+        const { productId, productQuantity, productColor } = item;
+        cartbody.items.push({
+          productId,
+          quantity: productQuantity,
+          color: productColor,
+        });
+      });
+  
+      console.log(cartbody);
+  
+      const res = await axios.post(`${rootAPI}purchase/add`, cartbody);
+  
+      console.log(rootAPI);
+  
+      if (res.status === 200) {
+        window.alert(res.data.message);
+        dispatch(setCartToNull());
+        navigate("/");
+      }
+  
+      // TODO: payment
     } catch (err) {
       console.log(err);
     }
@@ -63,7 +93,7 @@ const Cart = () => {
         <Divider />
       </Box>
 
-      {cart.length == 0 ? (
+      {cart.length === 0 ? (
         <Typography textAlign="center">Your cart is empty...</Typography>
       ) : (
         <Box m={isDesktop ? "1rem" : "0.8rem"}>
@@ -91,9 +121,20 @@ const Cart = () => {
                 >
                   {i.productName}
                 </Typography>
-                <Typography variant="h6" color={theme.palette.neutral.main}>
-                  ${i.productPrice.toFixed(2)} / each
-                </Typography>
+
+                <Box display={isDesktop ? "inline" : undefined}>
+                  <Typography variant="h6" color={theme.palette.neutral.main}>
+                    $ {i.productPrice.toFixed(2)} / each
+                  </Typography>
+                  {i.productColor !== "default" && (
+                    <Typography variant="h6" color={theme.palette.neutral.main}>
+                      Color:{" "}
+                      {i.productColor &&
+                        i.productColor.charAt(0).toUpperCase() +
+                          i.productColor.slice(1)}
+                    </Typography>
+                  )}
+                </Box>
               </Box>
 
               <Box
@@ -112,7 +153,7 @@ const Cart = () => {
                   </FlexBetween>
 
                   <Typography variant="h4">
-                    ${i.totalPrice.toFixed(2)}
+                    $ {i.totalPrice.toFixed(2)}
                   </Typography>
                 </FlexBetween>
               </Box>

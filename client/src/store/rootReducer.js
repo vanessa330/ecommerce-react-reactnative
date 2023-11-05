@@ -3,8 +3,10 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   mode: "light",
   token: null,
-  name: "", // customer name
+  userId: null, // customer id
+  userName: "", // customer name
   cart: [],
+  cartQty: 0,
 };
 
 export const rootSlice = createSlice({
@@ -16,11 +18,13 @@ export const rootSlice = createSlice({
     },
     setLogin: (state, action) => {
       state.token = action.payload.token;
-      state.name = action.payload.name;
+      state.userId = action.payload.id;
+      state.userName = action.payload.name;
     },
     setLogout: (state) => {
       state.token = null;
-      state.name = ''; 
+      state.userId = 1;
+      state.userName = "";
     },
     setCart: (state, action) => {
       const {
@@ -32,7 +36,7 @@ export const rootSlice = createSlice({
         totalPrice,
       } = action.payload;
 
-      // eslint-disable-next-line 
+      // eslint-disable-next-line
       const existingCartItem = state.cart.find((i) => i.productId == productId);
 
       if (existingCartItem) {
@@ -51,9 +55,19 @@ export const rootSlice = createSlice({
         };
         state.cart.push(cartItem);
       }
+
+      const totalProductQty = state.cart.reduce(
+        (total, item) => total + item.productQuantity,
+        0
+      );
+      state.cartQty = totalProductQty;
+    },
+    setCartToNull: (state) => {
+      state.cart = [];
+      state.cartQty = 0;
     },
   },
 });
 
-export const { setMode, setLogin, setLogout, setCart } = rootSlice.actions;
+export const { setMode, setLogin, setLogout, setCart, setCartToNull } = rootSlice.actions;
 export default rootSlice.reducer;

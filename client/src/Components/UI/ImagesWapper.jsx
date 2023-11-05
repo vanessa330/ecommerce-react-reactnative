@@ -1,9 +1,9 @@
 import { NavigateBefore, NavigateNext } from "@mui/icons-material";
 import ReactSwipe from "react-swipe";
 
-const ImagesWapper = ({ images, width = "100%", height }) => {
-  const rootAPI = process.env.REACT_APP_API;
+const rootAPI = process.env.REACT_APP_API;
 
+const ImagesWapper = ({ images, width = "100%", height }) => {
   let reactSwipeEl;
 
   return (

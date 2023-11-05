@@ -4,7 +4,6 @@ import Products from "../Products";
 const Home = () => {
   return (
     <>
-      <p>Home...pending</p>
       <Products />
     </>
   );

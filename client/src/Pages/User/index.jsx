@@ -1,21 +1,27 @@
-import React, { useEffect, useState } from "react";
-import { useUser } from "../../Hooks/useUser";
+import React, { useState } from "react";
 import { Box, Typography, useMediaQuery } from "@mui/material";
 import Wrapper from "../../Components/UI/Wapper";
 import UserAddress from "./UserAddress";
 import UserOrder from "./UserOrder";
 import UserWishlist from "./UserWishlist";
 import { useTheme } from "@emotion/react";
+import { useNavigate } from "react-router-dom";
+import { setLogout } from "../../store/rootReducer";
+import { useDispatch } from "react-redux";
 
 const User = () => {
-  const user = useUser();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [showPage, setShowPage] = useState("Order");
+
+  const handleLogout = () => {
+    dispatch(setLogout());
+    navigate(`/`);
+  };
 
   // CSS
   const isDesktop = useMediaQuery("(min-width: 1000px)");
   const theme = useTheme();
-
-  useEffect(() => {}, [user]);
 
   return (
     <Box m={isDesktop ? "2rem auto" : "1rem auto"} maxWidth="1000px">
@@ -76,6 +82,21 @@ const User = () => {
               onClick={() => setShowPage("Address")}
             >
               Address
+            </Typography>
+            <Typography
+              variant="h5"
+              textAlign="center"
+              fontWeight="500"
+              padding="10px"
+              sx={{
+                "&:hover": {
+                  color: theme.palette.primary.light,
+                  cursor: "pointer",
+                },
+              }}
+              onClick={handleLogout}
+            >
+              Logout
             </Typography>
           </Wrapper>
         </Box>

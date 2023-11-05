@@ -30,7 +30,8 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const token = useSelector((state) => state.token);
-  const customerName = useSelector((state) => state.name);
+  const customerName = useSelector((state) => state.userName);
+  const cartQty = useSelector((state) => state.cartQty);
 
   const handleSearch = () => {
     navigate(`/products/${searchQuery}`);
@@ -49,8 +50,6 @@ const Navbar = () => {
       fontSize: "25px",
     },
   };
-
-  const itemCount = 5;
 
   return (
     <Box>
@@ -148,7 +147,7 @@ const Navbar = () => {
           <Person style={styles.icon} />
           {isDesktop && (
             <Typography p="0.5rem">
-              {token == null ? "Login / Signup" : customerName}
+              {token == null ? "Login" : customerName}
             </Typography>
           )}
         </IconButton>
@@ -178,23 +177,26 @@ const Navbar = () => {
 
         <IconButton onClick={() => navigate(`/cart`)}>
           <ShoppingCart style={styles.icon} />
-          {itemCount !== "0" && (
-            <Avatar
-              sx={{
-                backgroundColor: theme.palette.primary.main,
-                width: "20px",
-                height: "20px",
-                margin: "3px -8px 25px",
-                zIndex: "5",
-                position: "relative",
-              }}
-            >
-              <Badge
-                sx={{ color: theme.palette.primary.contrastText }}
-                badgeContent={itemCount}
-              />
-            </Avatar>
-          )}
+          {
+            // eslint-disable-next-line
+            cartQty != "0" && (
+              <Avatar
+                sx={{
+                  backgroundColor: theme.palette.primary.main,
+                  width: "20px",
+                  height: "20px",
+                  margin: "3px -8px 25px",
+                  zIndex: "5",
+                  position: "relative",
+                }}
+              >
+                <Badge
+                  sx={{ color: theme.palette.primary.contrastText }}
+                  badgeContent={cartQty}
+                />
+              </Avatar>
+            )
+          }
           {isDesktop && <Typography p="0.5rem">Cart</Typography>}
         </IconButton>
       </Box>

@@ -1,10 +1,10 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 
+const rootAPI = process.env.REACT_APP_API;
+
 export const useCategories = () => {
   const [categories, setCategories] = useState([]);
-
-  const rootAPI = process.env.REACT_APP_API;
 
   const fetchCategories = async () => {
     const res = await axios.get(`${rootAPI}category/get`);

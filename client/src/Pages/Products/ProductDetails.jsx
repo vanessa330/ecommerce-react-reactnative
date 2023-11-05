@@ -20,6 +20,8 @@ import { FavoriteBorderOutlined, FavoriteOutlined } from "@mui/icons-material";
 import axios from "axios";
 import { useUser } from "../../Hooks/useUser";
 
+const rootAPI = process.env.REACT_APP_API;
+
 const ProductDetails = () => {
   const dispatch = useDispatch();
   const { id } = useParams();
@@ -31,11 +33,9 @@ const ProductDetails = () => {
   const wishlistString = user?.wishlist?.split(", ");
   const wishlistIds = wishlistString?.map((id) => parseInt(id.trim(), 10));
 
-  const [selectedColor, setSelectedColor] = useState(null);
+  const [selectedColor, setSelectedColor] = useState("default");
   const [selectedQuantity, setSelectedQuantity] = useState(1);
   const maxQuantity = 5;
-
-  const rootAPI = process.env.REACT_APP_API;
 
   // CSS
   const theme = useTheme();
@@ -90,7 +90,6 @@ const ProductDetails = () => {
     setProduct(foundProduct);
 
     if (wishlistIds?.includes(parseInt(id))) setIsLiked(true);
-    console.log(selectedColor);
   }, [products, id, wishlistIds]);
 
   if (!product) {
@@ -232,7 +231,7 @@ const ProductDetails = () => {
                       height: "20px",
                       border:
                         selectedColor === c
-                          ? "3px solid lightblue"
+                          ? "4px solid lightblue"
                           : "1px solid grey",
                       cursor: "pointer",
                     }}

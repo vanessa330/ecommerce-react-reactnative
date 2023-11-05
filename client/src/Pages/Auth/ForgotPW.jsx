@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { useTheme, Box, Typography, TextField, Button } from "@mui/material";
 import axios from "axios";
 
-const ForgotPW = () => {
-  const rootAPI = process.env.REACT_APP_API;
+const rootAPI = process.env.REACT_APP_API;
 
+const ForgotPW = () => {
   // CSS
   const theme = useTheme();
 
