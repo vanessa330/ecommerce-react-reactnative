@@ -6,7 +6,7 @@ import UserOrder from "./UserOrder";
 import UserWishlist from "./UserWishlist";
 import { useTheme } from "@emotion/react";
 import { useNavigate } from "react-router-dom";
-import { setLogout } from "../../store/rootReducer";
+import { setLogout, setUserDetailsToNull } from "../../store/rootReducer";
 import { useDispatch } from "react-redux";
 
 const User = () => {
@@ -15,8 +15,13 @@ const User = () => {
   const [showPage, setShowPage] = useState("Order");
 
   const handleLogout = () => {
-    dispatch(setLogout());
-    navigate(`/`);
+    const confirmed = window.confirm("Are you sure you want to logout?");
+
+    if (confirmed) {
+      dispatch(setLogout());
+      dispatch(setUserDetailsToNull());
+      navigate(`/`);
+    }
   };
 
   // CSS
@@ -34,9 +39,9 @@ const User = () => {
           flexBasis={isDesktop ? "30%" : undefined}
           m={isDesktop ? "0 1rem" : "1rem 0"}
         >
-          <Wrapper 
-        display={isDesktop ? "block" : "flex"}
-        justifyContent={isDesktop ? "undefined" : "space-between"}
+          <Wrapper
+            display={isDesktop ? "block" : "flex"}
+            justifyContent={isDesktop ? "undefined" : "space-between"}
           >
             <Typography
               variant="h5"

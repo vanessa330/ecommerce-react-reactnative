@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { useProducts } from "../../Hooks/useProducts";
 import ProductWapper from "../../Components/UI/ProductWapper";
 import { Box, useMediaQuery } from "@mui/material";
 import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const ProductByFilter = () => {
   const { filter } = useParams();
   const [filterProduct, setFilterProduct] = useState();
-  const products = useProducts();
+  const products = useSelector((state) => state.products);
 
   useEffect(() => {
     const foundProduct = products.filter(

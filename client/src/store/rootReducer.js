@@ -5,8 +5,10 @@ const initialState = {
   token: null,
   userId: null, // customer id
   userName: "", // customer name
+  userDetails: {}, // customer details
   cart: [],
   cartQty: 0,
+  products: [], // products details
 };
 
 export const rootSlice = createSlice({
@@ -25,6 +27,12 @@ export const rootSlice = createSlice({
       state.token = null;
       state.userId = 1;
       state.userName = "";
+    },
+    setUserDetails: (state, action) => {
+      state.userDetails = action.payload;
+    },
+    setUserDetailsToNull: (state) => {
+      state.userDetails = {};
     },
     setCart: (state, action) => {
       const {
@@ -66,8 +74,20 @@ export const rootSlice = createSlice({
       state.cart = [];
       state.cartQty = 0;
     },
+    setProducts: (state, action) => {
+      state.products = action.payload;
+    },
   },
 });
 
-export const { setMode, setLogin, setLogout, setCart, setCartToNull } = rootSlice.actions;
+export const {
+  setMode,
+  setLogin,
+  setLogout,
+  setUserDetails,
+  setUserDetailsToNull,
+  setCart,
+  setCartToNull,
+  setProducts,
+} = rootSlice.actions;
 export default rootSlice.reducer;

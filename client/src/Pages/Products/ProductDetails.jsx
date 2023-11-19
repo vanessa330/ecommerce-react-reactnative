@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { setCart } from "../../store/rootReducer";
-import { useProducts } from "../../Hooks/useProducts";
+import { setCart, setUserDetails } from "../../store/rootReducer";
 import Wrapper from "../../Components/UI/Wapper";
 import ImagesWapper from "../../Components/UI/ImagesWapper";
 import FlexBetween from "../../Components/UI/FlexBetween";
@@ -18,7 +17,6 @@ import {
 } from "@mui/material";
 import { FavoriteBorderOutlined, FavoriteOutlined } from "@mui/icons-material";
 import axios from "axios";
-import { useUser } from "../../Hooks/useUser";
 
 const rootAPI = process.env.REACT_APP_API;
 
@@ -26,11 +24,12 @@ const ProductDetails = () => {
   const dispatch = useDispatch();
   const { id } = useParams();
   const [product, setProduct] = useState();
-  const products = useProducts();
+  const products = useSelector((state) => state.products);
 
   const token = useSelector((state) => state.token);
-  const user = useUser();
-  const wishlistString = user?.wishlist?.split(", ");
+
+  const userWishlistData = useSelector((state) => state.userDetails.wishlist);
+  const wishlistString = userWishlistData?.split(", ") || [];
   const wishlistIds = wishlistString?.map((id) => parseInt(id.trim(), 10));
 
   const [selectedColor, setSelectedColor] = useState("default");
@@ -44,24 +43,25 @@ const ProductDetails = () => {
 
   const handleWishlist = async () => {
     try {
-      let wishlistBody = wishlistIds;
+      const index = wishlistIds.indexOf(parseInt(id));
 
-      const index = wishlistBody.indexOf(parseInt(id));
       if (index !== -1) {
-        wishlistBody.splice(index, 1);
+        wishlistIds.splice(index, 1);
       } else {
-        wishlistBody.push(id);
+        wishlistIds.push(id); 
       }
 
-      const body = { wishlist: wishlistBody.join(", ") };
-      const config = { headers: { Authorization: `Bearer ${token}` } };
-      const res = await axios.patch(
-        `${rootAPI}user/updateWishlist`,
-        body,
-        config
-      );
+      const wishlist = wishlistIds.join(", ");
+      const body = { wishlist: wishlist || null };
 
-      if (res.status === 200) window.location.reload();
+      const res = await axios.patch(`${rootAPI}user/updateWishlist`, body, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (res.status === 200) {
+        dispatch(setUserDetails(res.data));
+        setIsLiked(!isLiked)
+      }
     } catch (error) {
       console.log(error);
     }
@@ -128,31 +128,33 @@ const ProductDetails = () => {
 
             <ImagesWapper images={images} width="100%" height="300px" />
 
-            <IconButton onClick={handleWishlist}>
-              {isLiked ? (
-                <>
-                  <FavoriteOutlined
-                    style={{
-                      color: theme.palette.primary.main,
-                      fontSize: "20px",
-                      margin: "10px",
-                    }}
-                  />
-                  <Typography>IN WISHLIST</Typography>
-                </>
-              ) : (
-                <>
-                  <FavoriteBorderOutlined
-                    style={{
-                      color: theme.palette.primary.main,
-                      fontSize: "20px",
-                      margin: "10px",
-                    }}
-                  />
-                  <Typography>ADD TO WISHLIST</Typography>
-                </>
-              )}
-            </IconButton>
+            {token ? (
+              <IconButton onClick={handleWishlist}>
+                {isLiked ? (
+                  <>
+                    <FavoriteOutlined
+                      style={{
+                        color: theme.palette.primary.main,
+                        fontSize: "20px",
+                        margin: "10px",
+                      }}
+                    />
+                    <Typography>IN WISHLIST</Typography>
+                  </>
+                ) : (
+                  <>
+                    <FavoriteBorderOutlined
+                      style={{
+                        color: theme.palette.primary.main,
+                        fontSize: "20px",
+                        margin: "10px",
+                      }}
+                    />
+                    <Typography>ADD TO WISHLIST</Typography>
+                  </>
+                )}
+              </IconButton>
+            ) : null}
           </Wrapper>
 
           <Wrapper

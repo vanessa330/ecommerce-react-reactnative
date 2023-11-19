@@ -1,21 +1,30 @@
-import React, { useEffect } from "react";
-import { useUser } from "../../Hooks/useUser";
-import { useProducts } from "../../Hooks/useProducts";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 import ProductWapper from "../../Components/UI/ProductWapper";
-import { Box, Divider, Typography, useMediaQuery } from "@mui/material";
+import {
+  useTheme,
+  Box,
+  Divider,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
+import { useSelector } from "react-redux";
 
 const UserWishlist = () => {
-  const user = useUser();
-  const products = useProducts();
+  const navigate = useNavigate();
 
-  const wishlistString = user?.wishlist?.split(", ");
+  const products = useSelector((state) => state.products);
+
+  const token = useSelector((state) => state.token);
+
+  const userWishlist = useSelector((state) => state.userDetails.wishlist);
+  const wishlistString = userWishlist?.split(", ");
   const wishlistIds = wishlistString?.map((id) => parseInt(id.trim(), 10));
   const wishlist = products.filter((p) => wishlistIds?.includes(p.id));
 
   // CSS
+  const theme = useTheme();
   const isDesktop = useMediaQuery("(min-width: 1000px)");
-
-  useEffect(() => {}, [user, products]);
 
   return (
     <Box m={isDesktop ? "1rem auto" : "1rem auto"} maxWidth="1000px">
@@ -26,27 +35,46 @@ const UserWishlist = () => {
         <Divider />
       </Box>
 
-      {!wishlist ? (
-        <Typography textAlign="center">Your wishlist is empty...</Typography>
-      ) : (
-        <Box
-          display="grid"
-          gridTemplateColumns="repeat(auto-fit, minmax(300px, 1fr))"
-          gap="2rem"
-          m={isDesktop ? "0 0.5rem" : "0.8rem"}
+      {!token ? (
+        <Typography
+          onClick={() => navigate("/auth")}
+          textAlign="center"
+          sx={{
+            "&:hover": {
+              color: theme.palette.primary.light,
+              cursor: "pointer",
+            },
+          }}
         >
-          {wishlist.map((p) => (
-            <ProductWapper
-              key={p.id}
-              id={p.id}
-              name={p.name}
-              price={p.price}
-              quantity={p.quantity}
-              color={p.color}
-              images={p.images}
-            />
-          ))}
-        </Box>
+          You should login first.
+        </Typography>
+      ) : (
+        <>
+          {!wishlist ? (
+            <Typography textAlign="center">
+              Your wishlist is empty...
+            </Typography>
+          ) : (
+            <Box
+              display="grid"
+              gridTemplateColumns="repeat(auto-fit, minmax(300px, 1fr))"
+              gap="2rem"
+              m={isDesktop ? "0 0.5rem" : "0.8rem"}
+            >
+              {wishlist.map((p) => (
+                <ProductWapper
+                  key={p.id}
+                  id={p.id}
+                  name={p.name}
+                  price={p.price}
+                  quantity={p.quantity}
+                  color={p.color}
+                  images={p.images}
+                />
+              ))}
+            </Box>
+          )}
+        </>
       )}
     </Box>
   );

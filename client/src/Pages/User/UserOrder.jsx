@@ -1,10 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Divider,
-  Typography,
-  useTheme,
-} from "@mui/material";
+import { Box, Divider, Typography, useTheme } from "@mui/material";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import FlexBetween from "../../Components/UI/FlexBetween";
@@ -14,6 +9,7 @@ const rootAPI = process.env.REACT_APP_API;
 const UserOrder = () => {
   const [purchase, setPurchase] = useState([]);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const token = useSelector((state) => state.token);
   const userId = useSelector((state) => state.userId);
 
   // CSS
@@ -37,7 +33,9 @@ const UserOrder = () => {
   };
 
   const fetchPurchase = async () => {
-    const res = await axios.get(`${rootAPI}purchase/getByUser/${userId}`);
+    const res = await axios.get(`${rootAPI}purchase/getByUser/${userId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
     if (res.status === 200) setPurchase(res.data);
   };
